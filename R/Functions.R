@@ -3,6 +3,7 @@
 #' \code{read_network} Function that analyzes a dyadic timeseries network and calculates strength
 #' and density variables. Assumes variables are list for one subject and then
 #' equivalent list for another.
+#' @export
 read_network <- function(mlvar_model) {
   ntwrk_vars <- list()
   ntwrk_vars$contemp <- list()
@@ -162,6 +163,7 @@ read_network <- function(mlvar_model) {
   return(ntwrk_vars)
 }
 
+#' @export
 lasso<-function(Data,Predictors,Outcome,Seeds=1,Train=F,PropOfTrain=.75){
   #Data=all,Predictors=pre_inter,Outcome="W_csi_3_resid_1",Train=F,PropOfTrain=.75)
   all.2<-Data[,c(Predictors,Outcome)]
