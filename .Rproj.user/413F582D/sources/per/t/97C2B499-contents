@@ -1,0 +1,78 @@
+source("Functions for couple network paper.R")
+
+temp1<-read.csv("ready_for_r.csv")
+summary(temp1)
+
+names(temp1)
+var.names<-names(temp1)[c(3:10)]
+fit1 <- mlVAR(temp1, vars = var.names, idvar = "COUPLE", beepvar="DIARYDAY" ,lags = 1,scale=T,scaleWithin = T)
+print(fit1)
+
+# Summary of all parameter estimates:
+summary(fit1)
+
+# Temporal relationships:
+plot(fit1, "temporal", title = "Sample 2: Temporal Network", layout = "circle",label.cex=1.5,
+     legend.cex = 0.5, filename="Temporal", filetype="pdf",alpha = 0.05, edge.labels = TRUE)
+# Contemporaneous partial correlations:
+plot(fit1, "contemporaneous", title = "Sample 2: Contemporaneous Network", layout = "circle",label.cex=1.5,
+     legend.cex = 0.5, filename="Contemporaneous", filetype="pdf",alpha = 0.05, edge.labels = TRUE)
+# Between-subjects partial correlations:
+plot(fit1, "between", title = "Sample 2: Between-Couples Network ", layout = "circle",label.cex=1.5,
+     legend.cex = 0.5, filename="Between", filetype="pdf",alpha = 0.05, edge.labels = TRUE)
+
+#plot networks for specific subjects
+
+plot(fit1, "contemporaneous", title = "Estimated temporal relationships", layout = "circle",label.cex=1.5,
+     legend.cex = 0.5, subject=2,alpha = 0.05, edge.labels = TRUE,filename="cont-202", filetype="pdf")
+
+plot(fit1, "temporal", title = "Estimated temporal relationships", layout = "circle",label.cex=1.5,
+     legend.cex = 0.5, subject=1,alpha = 0.05, edge.labels = TRUE,filename="temp-201", filetype="pdf")
+
+#see function file - calculate various network variables
+ntwrk <- read_network(fit1)
+
+#importing the BQ vars 
+bq<-read.csv("ready_for_r_bq.csv")
+names(bq)[1]<-"ID"
+summary(bq[c("M_csi","W_csi","M_csi_2","W_csi_2","M_csi_3","W_csi_3")])
+
+#merging bq with network
+all<-merge(ntwrk$contemp$all,ntwrk$temporal$all, by=c("ID"),all=T,sort=T)
+all<-merge(all,bq, by=c("ID"),all=T,sort=T)
+
+#getting residual scores
+resid<-function(data,outcome,cov,suffix){
+  a<-data.frame(matrix(nrow=length(data[,1]),ncol = 0))
+  reg<-lm(scale(data[,outcome])~scale(data[,cov]),data=data, na.action = na.exclude)
+  a[,paste(outcome,suffix,sep="_")]<-scale(data[,outcome])-(scale(data[,cov])*reg$coefficients[2]+reg$coefficients[1])
+  return(a)
+  }
+
+all[,(length(all[1,])+1)]<-resid(data=all,outcome="W_csi_3",cov="W_csi",suffix="resid_1")
+all[,(length(all[1,])+1)]<-resid(data=all,outcome="M_csi_3",cov="M_csi",suffix="resid_1")
+
+all[,(length(all[1,])+1)]<-resid(data=all,outcome="W_csi_3",cov="W_csi_2",suffix="resid_2")
+all[,(length(all[1,])+1)]<-resid(data=all,outcome="M_csi_3",cov="M_csi_2",suffix="resid_2")
+
+length(all)
+summary(all[,142:145])
+
+#comparing predictive value of inter and intra nodes 
+pre_inter<-c(ntwrk$contemp$inter_names,ntwrk$temporal$inter_names)
+pre_intra_men<-c(ntwrk$contemp$intra_men_names,ntwrk$temporal$intra_men_names)
+pre_intra_women<-c(ntwrk$contemp$intra_women_names,ntwrk$temporal$intra_women_names)
+
+#Predicting women's time 3 CSI, controlling for time 1 CSI
+women.csi_r_inter<-lasso(Data=all,Predictors=pre_inter,Outcome="W_csi_3_resid_1",Train=F,PropOfTrain=.75)
+women.csi_r_intra<-lasso(Data=all,Predictors=pre_intra_women,Outcome="W_csi_3_resid_1",Train=F,PropOfTrain=.75)
+#Predicting men's time 3 CSI, controlling for time 1 CSI
+men.csi_r_inter<-lasso(Data=all,Predictors=pre_inter,Outcome="M_csi_3_resid_1",Train=F,PropOfTrain=.75)
+men.csi_r_intra<-lasso(Data=all,Predictors=pre_intra_men,Outcome="M_csi_3_resid_1",Train=F,PropOfTrain=.75)
+
+#Predicting women's time 3 CSI, controlling for time 2 CSI 
+women.csi_r_inter<-lasso(Data=all,Predictors=pre_inter,Outcome="W_csi_3_resid_2",Train=F,PropOfTrain=.75)
+women.csi_r_intra<-lasso(Data=all,Predictors=pre_intra_women,Outcome="W_csi_3_resid_2",Train=F,PropOfTrain=.75)
+#Predicting men's time 3 CSI, controlling for time 2 CSI
+men.csi_r_inter<-lasso(Data=all,Predictors=pre_inter,Outcome="M_csi_3_resid_2",Train=F,PropOfTrain=.75)
+men.csi_r_intra<-lasso(Data=all,Predictors=pre_intra_men,Outcome="M_csi_3_resid_2",Train=F,PropOfTrain=.75)
