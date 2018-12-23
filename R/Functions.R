@@ -34,8 +34,8 @@ read_network <- function(mlvar_model) {
        #calculate strength either for connections to each node or from each node
 
        for (t in 1:(ntwrk_vars$vars$len)){
-         temporal.1[[paste(ntwrk_vars$vars$names[[t]]," temp.to. centrality",sep="")]] <- rowMeans(abs(mlvar_model$results$Beta$subject[[i]]))[t]
-         temporal.1[[paste(ntwrk_vars$vars$names[[t]]," temp.from. centrality",sep="")]] <- colMeans(abs(mlvar_model$results$Beta$subject[[i]]))[t]
+         temporal.1[[paste(ntwrk_vars$vars$names[[t]]," temp.to. strength",sep="")]] <- rowMeans(abs(mlvar_model$results$Beta$subject[[i]]))[t]
+         temporal.1[[paste(ntwrk_vars$vars$names[[t]]," temp.from. strength",sep="")]] <- colMeans(abs(mlvar_model$results$Beta$subject[[i]]))[t]
        }
 
        #calculate per person density
@@ -65,7 +65,7 @@ read_network <- function(mlvar_model) {
                                         }
        contemporaneous.2<-data.frame(t(contemporaneous.2))
        for (t in 1:(ntwrk_vars$vars$len)){
-         contemporaneous.2[[paste(ntwrk_vars$vars$names[[t]]," cont. centrality",sep="")]] <- rowMeans(abs(mlvar_model$results$Theta$pcor$subject[[i]]))[t]-(1/length(mlvar_model$results$Theta$pcor$subject[[i]][1,]))
+         contemporaneous.2[[paste(ntwrk_vars$vars$names[[t]]," cont. strength",sep="")]] <- rowMeans(abs(mlvar_model$results$Theta$pcor$subject[[i]]))[t]-(1/length(mlvar_model$results$Theta$pcor$subject[[i]][1,]))
        }
 
        #caluculating inter and intra density
@@ -85,10 +85,10 @@ read_network <- function(mlvar_model) {
 
   #generate names for couple level variables
   ntwrk_vars$temporal$names <- vector()
-  ntwrk_vars$temporal$centrality_names <- list()
+  ntwrk_vars$temporal$strength_names <- list()
   ntwrk_vars$temporal$inter_names <- vector()
-  ntwrk_vars$temporal$intra_men_names <- vector()
-  ntwrk_vars$temporal$intra_women_names <- vector()
+  ntwrk_vars$temporal$intra_partA_names <- vector()
+  ntwrk_vars$temporal$intra_partB_names <- vector()
   ntwrk_vars$temporal$intra_names <- vector()
   ntwrk_vars$temporal$density_names<-c("temporal.intra.density","temporal.inter.density","temporal.ratio.density")
   for(i in 1:ntwrk_vars$vars$len){
@@ -100,14 +100,14 @@ read_network <- function(mlvar_model) {
   names(ntwrk_vars$temporal$all)[1:ntwrk_vars$vars$len^2] <- ntwrk_vars$temporal$names
 
   for (i in 1:length(ntwrk_vars$vars$names)){
-    ntwrk_vars$temporal$centrality_names[[i*2 - 1]]<- paste(ntwrk_vars$vars$names[[i]]," temp.to. centrality",sep="")
-    ntwrk_vars$temporal$centrality_names[[i*2]]<- paste(ntwrk_vars$vars$names[[i]]," temp.from. centrality",sep="")
+    ntwrk_vars$temporal$strength_names[[i*2 - 1]]<- paste(ntwrk_vars$vars$names[[i]]," temp.to. strength",sep="")
+    ntwrk_vars$temporal$strength_names[[i*2]]<- paste(ntwrk_vars$vars$names[[i]]," temp.from. strength",sep="")
   }
   half.len<-ntwrk_vars$vars$len/2
   for(i in 1:half.len){
     for (j in 1:half.len)
     {
-      ntwrk_vars$temporal$intra_men_names[[(i-1)*half.len + j]]<-paste(ntwrk_vars$vars$names[[i]],"->",ntwrk_vars$vars$names[[j]])
+      ntwrk_vars$temporal$intra_partA_names[[(i-1)*half.len + j]]<-paste(ntwrk_vars$vars$names[[i]],"->",ntwrk_vars$vars$names[[j]])
       ntwrk_vars$temporal$inter_names[[(i-1)*half.len + j]]<-paste(ntwrk_vars$vars$names[[i]],"->",ntwrk_vars$vars$names[[j+half.len]])
     }
 
@@ -116,18 +116,18 @@ read_network <- function(mlvar_model) {
   for(i in 1:half.len){
   for (j in 1:half.len)
   {
-    ntwrk_vars$temporal$intra_women_names[[(i-1)*half.len + j]]<-paste(ntwrk_vars$vars$names[[i+half.len]],"->",ntwrk_vars$vars$names[[j+half.len]])
+    ntwrk_vars$temporal$intra_partB_names[[(i-1)*half.len + j]]<-paste(ntwrk_vars$vars$names[[i+half.len]],"->",ntwrk_vars$vars$names[[j+half.len]])
     ntwrk_vars$temporal$inter_names[[half.len^2 +(i-1)*half.len + j]]<-paste(ntwrk_vars$vars$names[[i+half.len]],"->",ntwrk_vars$vars$names[[j]])
   }
   }
-  ntwrk_vars$temporal$intra_names<-c(ntwrk_vars$temporal$intra_men_names,ntwrk_vars$temporal$intra_women_names)
+  ntwrk_vars$temporal$intra_names<-c(ntwrk_vars$temporal$intra_partA_names,ntwrk_vars$temporal$intra_partB_names)
 
   ntwrk_vars$contemp$names <- vector()
-  ntwrk_vars$contemp$centrality_names <- list()
+  ntwrk_vars$contemp$strength_names <- list()
   ntwrk_vars$contemp$inter_names <- vector()
   ntwrk_vars$contemp$intra_names <- vector()
-  ntwrk_vars$contemp$intra_men_names <- vector()
-  ntwrk_vars$contemp$intra_women_names <- vector()
+  ntwrk_vars$contemp$intra_partA_names <- vector()
+  ntwrk_vars$contemp$intra_partB_names <- vector()
   ntwrk_vars$contemp$density_names<-c("cont.intra.density","cont.inter.density","cont.ratio.density")
   for(i in 1:(ntwrk_vars$vars$len-1)){
     for (j in (i+1):ntwrk_vars$vars$len)
@@ -138,18 +138,18 @@ read_network <- function(mlvar_model) {
   names(ntwrk_vars$contemp$all)[1:length(ntwrk_vars$contemp$names)]<-ntwrk_vars$contemp$names
 
   for (i in 1:length(ntwrk_vars$vars$names)){
-    ntwrk_vars$contemp$centrality_names[i]<- paste(ntwrk_vars$vars$names[[i]]," cont. centrality",sep="")
+    ntwrk_vars$contemp$strength_names[i]<- paste(ntwrk_vars$vars$names[[i]]," cont. strength",sep="")
   }
 
   for(i in 1:(half.len-1)){
     for (j in (i+1):half.len)
     {
-      ntwrk_vars$contemp$intra_men_names[[length(ntwrk_vars$contemp$intra_men_names)+1]]<-paste(ntwrk_vars$vars$names[[i]],"<->",ntwrk_vars$vars$names[[j]])
-      ntwrk_vars$contemp$intra_women_names[[length(ntwrk_vars$contemp$intra_women_names)+1]]<-paste(ntwrk_vars$vars$names[[i+half.len]],"<->",ntwrk_vars$vars$names[[j+half.len]])
+      ntwrk_vars$contemp$intra_partA_names[[length(ntwrk_vars$contemp$intra_partA_names)+1]]<-paste(ntwrk_vars$vars$names[[i]],"<->",ntwrk_vars$vars$names[[j]])
+      ntwrk_vars$contemp$intra_partB_names[[length(ntwrk_vars$contemp$intra_partB_names)+1]]<-paste(ntwrk_vars$vars$names[[i+half.len]],"<->",ntwrk_vars$vars$names[[j+half.len]])
           }
 
   }
-  ntwrk_vars$contemp$intra_names<-c(ntwrk_vars$contemp$intra_men_names,ntwrk_vars$contemp$intra_women_names)
+  ntwrk_vars$contemp$intra_names<-c(ntwrk_vars$contemp$intra_partA_names,ntwrk_vars$contemp$intra_partB_names)
   for(i in 1:(half.len)){
     for (j in (half.len+1):(half.len*2))
     {
@@ -159,17 +159,86 @@ read_network <- function(mlvar_model) {
 
 
   }
-
   return(ntwrk_vars)
 }
 
+#' @export
+INTRA_A = 1
+
+#' @export
+INTRA_B = 2
+
+#' @export
+INTER = 3
+
+#' @export
+STRENGTH = 4
+
+#' @export
+DENSITY = 5
+
+#' @export
+CONTEMP = 1
+
+#' @export
+TEMPORAL = 2
+
+#' @export
+ALL_NETWORK = 6
+
+#' @export
+get_network<-function(ntwrk, part = ALL_NETWORK, time = ALL_NETWORK) {
+  if (time == ALL_NETWORK) {
+    return(base::merge(get_network(ntwrk,part,CONTEMP),get_network(ntwrk,part,TEMPORAL)))
+  }
+  if (time == CONTEMP)
+  {
+    target = ntwrk$contemp
+  }
+  else
+  {
+    target = ntwrk$temporal
+  }
+
+  if (part == ALL_NETWORK)
+  {
+    return(target$all)
+  }
+  else if (part == INTRA_A)
+  {
+    return(target$all[target$intra_partA_names])
+  }
+  else if (part == INTRA_B)
+  {
+    return(target$all[target$intra_partB_names])
+  }
+  else if (part == INTER)
+  {
+    return(target$all[target$inter_names])
+  }
+  else if (part == STRENGTH)
+  {
+    return(target$all[target$strength_names])
+  }
+  else if (part == DENSITY)
+  {
+     return(target$all[target$density_names])
+  }
+}
+
+
+#' Use a LASSO algorithm to find important predictors
+#'
+#' \code{read_network} Function that uses the LASSO shrinkage reduction method
+#' to find meaningful predictors of an outcome vector
 #' @export
 lasso<-function(Data,Predictors,Outcome,Seeds=1,Train=F,PropOfTrain=.75){
   #Data=all,Predictors=pre_inter,Outcome="W_csi_3_resid_1",Train=F,PropOfTrain=.75)
   all.2<-Data[,c(Predictors,Outcome)]
   #removing incomplete data;
   all.2<-stats::na.omit(all.2)
-  #standardized data- #see here for more info: https://stats.stackexchange.com/questions/126109/coefficient-value-from-glmnet
+  #standardized data- #see here for more info:
+  #https://stats.stackexchange.com/questions/126109/coefficient-value-from-glmnet
   #and here https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html
   all.2<-as.data.frame(scale(all.2,center=T,scale = T))
   #taking out edges without variability
