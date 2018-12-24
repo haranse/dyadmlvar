@@ -1,8 +1,19 @@
-#' An mlVAR model with 6 nodes obtained from diary data collected from 80
-#' couples. Nodes include daily feelings of anger, sadness and anxiety for each
-#' partner
-#' @format an mlVAR object, with some internal variables removed to conserve
-#'   package space
+#' @details The package analyzes dyadic networks computed by the mlVAR package.
+#'   Use read_network to analyze a network, get_names to get lists of variable
+#'   names for specific types of variables (e.g. inter-partner variables), and
+#'   subset them from the table of all variables (ntwrk$all if ntwrk is the
+#'   output of read_network). Due to the large number of variables you will
+#'   probably want to use the lasso function to see which variables explain
+#'   significant amounts of variance in some outcome vector. More detail can be
+#'   found in Bar-Kalifa & Sened, 2019 (Under review).
+"_PACKAGE"
+
+#' Example mlVAR model
+#' @description An mlVAR model obtained from diary data collected from
+#'   80 couples. Nodes include daily feelings of anger, sadness and anxiety for
+#'   each partner an mlVAR object, with some internal variables removed to
+#'   conserve package space
+#' @format an mlVAR object with 6 nodes
 #' @source an internal dataset, analyzed using the mlVAR package (Epskamp,
 #'   Deserno & Bringmann, 2018). For details on the data collection see:
 #'   Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
@@ -10,11 +21,11 @@
 #'   Relationships, 23(1), 42-61.
 "fit1"
 
-#' Relationship satisfaction data before and after completing a daily diary for
-#' 80 couples, and residuals of post-diary satisfaction after adjusting for
-#' pre-diary satisfaction.
-#' @format an mlVAR object, with some internal variables removed to conserve
-#'   package space
+#' Relationship satisfaction data
+#' @description relationship satisfaction before and after completing a daily
+#'   diary for 80 couples, and residuals of post-diary satisfaction after
+#'   adjusting for pre-diary satisfaction.
+#' @format a dataframe with 7 variables and 80 rows
 #' @source an internal dataset, for details on the data collection see:
 #'   Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
 #'   judgments of support receipt between romantic partners. Personal
