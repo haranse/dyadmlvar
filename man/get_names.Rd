@@ -30,3 +30,10 @@ a list of variable name strings
 \code{get_names} Get a list of variable names form a dyadNetwork object,
 e.g. variable names for intra-partner connections for partner A
 }
+\examples{
+ntwrk <- read_network(fit1)
+#all variable names
+all_vars <- get_names(ntwrk)
+#inter-partner variables from the contemporaneous network
+inter_contemp_vars <- get_names(ntwrk, part = INTER, time = CONTEMP)
+}

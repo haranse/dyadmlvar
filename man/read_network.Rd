@@ -20,3 +20,6 @@ a dyadNetwork object with variables characterizing the network
 calculates strength and density variables. Assumes variables are list for one
 subject and then equivalent list for another.
 }
+\examples{
+ntwrk <- read_network(fit1)
+}

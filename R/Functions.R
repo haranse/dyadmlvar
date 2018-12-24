@@ -33,6 +33,8 @@
 #'   children) and the other to part B (e.g. women, therapists, parents)
 #' @return a dyadNetwork object with variables characterizing the network
 #' @export
+#' @examples
+#' ntwrk <- read_network(fit1)
 read_network <- function(mlvar_model) {
   ntwrk_vars <- list()
   ntwrk_vars$contemp <- list()
@@ -246,6 +248,12 @@ ALL_NETWORK = 6
 #'      ALL_NETWORK - both
 #' @return a list of variable name strings
 #' @export
+#' @examples
+#' ntwrk <- read_network(fit1)
+#' #all variable names
+#' all_vars <- get_names(ntwrk)
+#' #inter-partner variables from the contemporaneous network
+#' inter_contemp_vars <- get_names(ntwrk, part = INTER, time = CONTEMP)
 get_names<-function(ntwrk, part = ALL_NETWORK, time = ALL_NETWORK) {
   if (time == ALL_NETWORK) {
     return(c(get_names(ntwrk,part,CONTEMP),get_names(ntwrk,part,TEMPORAL)))
@@ -304,8 +312,13 @@ get_names<-function(ntwrk, part = ALL_NETWORK, time = ALL_NETWORK) {
 #' @return a list of estimates for the effect of the valid predictors, and a R^2
 #'   statistic for the final model
 #' @export
+#' @examples
+#' ntwrk <- read_network(fit1)
+#' #intra-partner variables from the partner B
+#' intra_B_vars <- get_names(ntwrk, part = INTRA_B, time = ALL_NETWORK)
+#' full_data <- merge(ntwrk$all, sat, by = "ID", all=TRUE, sort=TRUE)
+#' lasso(full_data, intra_B_vars, "W_csi_resid")
 lasso<-function(Data,Predictors,Outcome,Seeds=1,Train=F,PropOfTrain=.75, Plot=F){
-  #Data=all,Predictors=pre_inter,Outcome="W_csi_3_resid_1",Train=F,PropOfTrain=.75)
   all.2<-Data[,c(Predictors,Outcome)]
   #removing incomplete data;
   all.2<-stats::na.omit(all.2)
