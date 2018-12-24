@@ -1,8 +1,37 @@
+#' An mlVAR model with 6 nodes obtained from diary data collected from 80
+#' couples. Nodes include daily feelings of anger, sadness and anxiety for each
+#' partner
+#' @format an mlVAR object, with some internal variables removed to conserve
+#'   package space
+#' @source an internal dataset, analyzed using the mlVAR package (Epskamp,
+#'   Deserno & Bringmann, 2018). For details on the data collection see:
+#'   Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
+#'   judgments of support receipt between romantic partners. Personal
+#'   Relationships, 23(1), 42-61.
+"fit1"
+
+#' Relationship satisfaction data before and after completing a daily diary for
+#' 80 couples, and residuals of post-diary satisfaction after adjusting for
+#' pre-diary satisfaction.
+#' @format an mlVAR object, with some internal variables removed to conserve
+#'   package space
+#' @source an internal dataset, for details on the data collection see:
+#'   Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
+#'   judgments of support receipt between romantic partners. Personal
+#'   Relationships, 23(1), 42-61.
+"sat"
+
+
 #' Analyze a Dyadic Timeseries Network.
 #'
-#' \code{read_network} Function that analyzes a dyadic timeseries network and calculates strength
-#' and density variables. Assumes variables are list for one subject and then
-#' equivalent list for another.
+#' \code{read_network} Function that analyzes a dyadic timeseries network and
+#' calculates strength and density variables. Assumes variables are list for one
+#' subject and then equivalent list for another.
+#' @param mlvar_model An mlVAR object, usually created by the mlVAR function of
+#'   package mlVAR. The target variables should have been of even length, with
+#'   the first half belonging to part A of the dyad (e.g. men, clients,
+#'   children) and the other to part B (e.g. women, therapists, parents)
+#' @return a dyadNetwork object with variables characterizing the network
 #' @export
 read_network <- function(mlvar_model) {
   ntwrk_vars <- list()
@@ -159,37 +188,67 @@ read_network <- function(mlvar_model) {
 
 
   }
+  ntwrk_vars$all <- base::merge(ntwrk_vars$temporal$all, ntwrk_vars$contemp$all, by="ID")
+  class(ntwrk_vars) <- "dyadNetwork"
   return(ntwrk_vars)
 }
 
+#' Constant for retreiving node connections between partner A variables
 #' @export
 INTRA_A = 1
 
+#' Constant for retreiving node connections between partner B variables
 #' @export
 INTRA_B = 2
 
+#' Constant for retreiving node connections between partner A variables to
+#' parter B variables
 #' @export
 INTER = 3
 
+#' Constant for retreiving total node strengths
 #' @export
 STRENGTH = 4
 
+#' Constant for retreiving densities of intra-partner networks, inter-partner
+#' networks, and their ratio
 #' @export
 DENSITY = 5
 
+#' Constant for retreiving variables from the contemporaneous network
 #' @export
 CONTEMP = 1
 
+#' Constant for retreiving variables from the temporal network
 #' @export
 TEMPORAL = 2
 
+#' Constant for retreiving all available variables
 #' @export
 ALL_NETWORK = 6
 
+#' Get a list of variable names form a dyadNetwork object
+#'
+#' \code{get_names} Get a list of variable names form a dyadNetwork object,
+#' e.g. variable names for intra-partner connections for partner A
+#' @param ntwrk a dyadNetwork object
+#' @param part which kind of variables to retrieve:
+#'      INTRA_A - interconnections between partner A variables
+#'      INTRA_B - interconnections between partner B variables
+#'      INTER - connections between partner A to partner B variables
+#'      STRENGTH - node strengths
+#'      DENSITY - density of intra-partner and inter-partner networks and
+#'          the ratio between both densities
+#'      ALL_NETWORK - all variables
+#' @param time which network to retreive variables from:
+#'      TEMPORAL - temporal network
+#'      CONTEMP - contemporaneous network
+#'      ALL_NETWORK - both
+#' @return a list of variable name strings
 #' @export
-get_network<-function(ntwrk, part = ALL_NETWORK, time = ALL_NETWORK) {
+get_names<-function(ntwrk, part = ALL_NETWORK, time = ALL_NETWORK) {
   if (time == ALL_NETWORK) {
-    return(base::merge(get_network(ntwrk,part,CONTEMP),get_network(ntwrk,part,TEMPORAL)))
+    return(c(get_names(ntwrk,part,CONTEMP),get_names(ntwrk,part,TEMPORAL)))
   }
   if (time == CONTEMP)
   {
@@ -202,37 +261,50 @@ get_network<-function(ntwrk, part = ALL_NETWORK, time = ALL_NETWORK) {
 
   if (part == ALL_NETWORK)
   {
-    return(target$all)
+    return(c(get_names(ntwrk,INTRA_A,time),get_names(ntwrk,INTRA_B,time),get_names(ntwrk,INTER,time),
+             get_names(ntwrk,STRENGTH,time),get_names(ntwrk,DENSITY,time)))
   }
   else if (part == INTRA_A)
   {
-    return(target$all[target$intra_partA_names])
+    return(target$intra_partA_names)
   }
   else if (part == INTRA_B)
   {
-    return(target$all[target$intra_partB_names])
+    return(target$intra_partB_names)
   }
   else if (part == INTER)
   {
-    return(target$all[target$inter_names])
+    return(target$inter_names)
   }
   else if (part == STRENGTH)
   {
-    return(target$all[target$strength_names])
+    return(target$strength_names)
   }
   else if (part == DENSITY)
   {
-     return(target$all[target$density_names])
+     return(target$density_names)
   }
 }
 
 
 #' Use a LASSO algorithm to find important predictors
 #'
-#' \code{read_network} Function that uses the LASSO shrinkage reduction method
+#' \code{lasso} Function that uses the LASSO shrinkage reduction method
 #' to find meaningful predictors of an outcome vector
+#' @param Data a dataframe with columns for each predictor and for the outcome
+#'   variable
+#' @param Predictors a list of strings with predictor variables names
+#' @param Outcome a string with the name of an outcome variable
+#' @param Seeds a seed for randomly selecting some part of the data to be
+#'   training data and some to be testing data. default -
+#' @param Train Should we split data to training and test datasets (FALSE uses
+#'   all data for both)
+#' @param PropOfTrain How much of the data to use for training the model
+#' @param Plot shoud we show a plot of the parameter number and log likelihood?
+#' @return a list of estimates for the effect of the valid predictors, and a R^2
+#'   statistic for the final model
 #' @export
-lasso<-function(Data,Predictors,Outcome,Seeds=1,Train=F,PropOfTrain=.75){
+lasso<-function(Data,Predictors,Outcome,Seeds=1,Train=F,PropOfTrain=.75, Plot=F){
   #Data=all,Predictors=pre_inter,Outcome="W_csi_3_resid_1",Train=F,PropOfTrain=.75)
   all.2<-Data[,c(Predictors,Outcome)]
   #removing incomplete data;
@@ -244,8 +316,8 @@ lasso<-function(Data,Predictors,Outcome,Seeds=1,Train=F,PropOfTrain=.75){
   #taking out edges without variability
   for (no.var in Predictors){
     #no.var<-Predictors[9]
-    print(paste(no.var,":",is.na(stats::var(all.2[,no.var]))))
-    print(stats::var(all.2[,no.var]))
+    #print(paste(no.var,":",is.na(stats::var(all.2[,no.var]))))
+    #print(stats::var(all.2[,no.var]))
     if (is.na(stats::var(all.2[,no.var]))){
       all.2<-all.2[,-which(names(all.2)==no.var)]
         }
@@ -259,7 +331,10 @@ lasso<-function(Data,Predictors,Outcome,Seeds=1,Train=F,PropOfTrain=.75){
     #using cross-validation to choose the tuning parameter; by default it performs ten-fold cross-validation
     set.seed(Seeds)
     cv.out<-glmnet::cv.glmnet(x,y,alpha=1,intercept = F,standardize = F)
-    graphics::plot(cv.out)
+    if (Plot)
+    {
+      graphics::plot(cv.out)
+    }
     #for plot interpretatin see: https://stats.stackexchange.com/questions/253963/how-to-interpret-cv-glmnet-plot
     bestlam <-cv.out$lambda.min
     #getting estimates
@@ -286,7 +361,7 @@ lasso<-function(Data,Predictors,Outcome,Seeds=1,Train=F,PropOfTrain=.75){
     c<-list(Estimates=d,Rsquared=Rs)
     return(c)
   } else {
-        #splitting into train and test data
+  #splitting into train and test data
   set.seed(Seeds)
   train<-sort(sample (1: nrow(x), nrow(x)*PropOfTrain))
   test<-(-train)
@@ -296,7 +371,10 @@ lasso<-function(Data,Predictors,Outcome,Seeds=1,Train=F,PropOfTrain=.75){
   folds<-floor(length(y[train])/10)
   set.seed(Seeds)
   cv.out<-glmnet::cv.glmnet(x[train,],y[train],alpha=1,intercept = F,standardize = F,nfolds = folds)
-  graphics::plot(cv.out)
+  if (Plot)
+  {
+    graphics::plot(cv.out)
+  }
   #for plot interpretatin see: https://stats.stackexchange.com/questions/253963/how-to-interpret-cv-glmnet-plot
   bestlam <-cv.out$lambda.min
   #getting estimates

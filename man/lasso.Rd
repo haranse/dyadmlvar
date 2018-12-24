@@ -7,7 +7,27 @@
 lasso(Data, Predictors, Outcome, Seeds = 1, Train = F,
   PropOfTrain = 0.75)
 }
+\arguments{
+\item{Data}{a dataframe with columns for each predictor and for the outcome
+variable}
+
+\item{Predictors}{a list of strings with predictor variables names}
+
+\item{Outcome}{a string with the name of an outcome variable}
+
+\item{Seeds}{a seed for randomly selecting some part of the data to be
+training data and some to be testing data. default -}
+
+\item{Train}{Should we split data to training and test datasets (FALSE uses
+all data for both)}
+
+\item{PropOfTrain}{How much of the data to use for training the model}
+}
+\value{
+a list of estimates for the effect of the valid predictors, and a R^2
+  statistic for the final model
+}
 \description{
-\code{read_network} Function that uses the LASSO shrinkage reduction method
+\code{lasso} Function that uses the LASSO shrinkage reduction method
 to find meaningful predictors of an outcome vector
 }

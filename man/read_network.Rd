@@ -6,8 +6,17 @@
 \usage{
 read_network(mlvar_model)
 }
+\arguments{
+\item{mlvar_model}{An mlVAR object, usually created by the mlVAR function of
+package mlVAR. The target variables should have been of even length, with
+the first half belonging to part A of the dyad (e.g. men, clients,
+children) and the other to part B (e.g. women, therapists, parents)}
+}
+\value{
+a dyadNetwork object with variables characterizing the network
+}
 \description{
-\code{read_network} Function that analyzes a dyadic timeseries network and calculates strength
-and density variables. Assumes variables are list for one subject and then
-equivalent list for another.
+\code{read_network} Function that analyzes a dyadic timeseries network and
+calculates strength and density variables. Assumes variables are list for one
+subject and then equivalent list for another.
 }
