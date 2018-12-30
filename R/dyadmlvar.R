@@ -8,17 +8,24 @@
 #'   found in Bar-Kalifa & Sened, 2019 (Under review).
 "_PACKAGE"
 
-#' Example mlVAR model
-#' @description An mlVAR model obtained from diary data collected from
-#'   80 couples. Nodes include daily feelings of anger, sadness and anxiety for
-#'   each partner an mlVAR object, with some internal variables removed to
-#'   conserve package space
+#' Example data
+#' @description Diary data collected from 80 couples. Variables include daily
+#'   feelings of anger, sadness and anxiety for each partner, an id for each
+#'   couples and a diaryday denoting the relevant day of the diary (e.g. 0 for
+#'   the first day, 34 for day 35 of the diary)
 #' @format an mlVAR object with 6 nodes
-#' @source an internal dataset, analyzed using the mlVAR package (Epskamp,
-#'   Deserno & Bringmann, 2018). For details on the data collection see:
+#' @source an internal dataset. For details on the data collection see:
 #'   Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
 #'   judgments of support receipt between romantic partners. Personal
 #'   Relationships, 23(1), 42-61.
+"sample1"
+
+#' Example mlVAR model
+#' @description An mlVAR model obtained from analyzing sample1, with some
+#'   internal variables removed to conserve package space
+#' @format an mlVAR object with 6 nodes
+#' @source an internal dataset, analyzed using the mlVAR package (Epskamp,
+#'   Deserno & Bringmann, 2018).
 "fit1"
 
 #' Relationship satisfaction data
@@ -45,6 +52,17 @@
 #' @return a dyadNetwork object with variables characterizing the network
 #' @export
 #' @examples
+#' \donttest{
+#' require("mlVAR")
+#' # creating a variable list with the first half containing variables for
+#' # partner A and the second half containing variables for partner B
+#'  var.names =
+#' c("M_Anx.","M_Sad.","M_Vig.","M_Con.","W_Anx.","W_Sad.","W_Vig.","W_Con.")
+#'
+#' # running mlVAR to create a model
+#' fit1 <- mlVAR(sample1, vars = var.names, idvar = "ID", beepvar="DIARYDAY",
+#' lags = 1,scale=TRUE,scaleWithin = TRUE)
+#' }
 #' ntwrk <- read_network(fit1)
 read_network <- function(mlvar_model) {
   ntwrk_vars <- list()

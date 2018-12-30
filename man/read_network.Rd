@@ -21,5 +21,16 @@ calculates strength and density variables. Assumes variables are list for one
 subject and then equivalent list for another.
 }
 \examples{
+\donttest{
+require("mlVAR")
+# creating a variable list with the first half containing variables for
+# partner A and the second half containing variables for partner B
+ var.names =
+c("M_Anx.","M_Sad.","M_Vig.","M_Con.","W_Anx.","W_Sad.","W_Vig.","W_Con.")
+
+# running mlVAR to create a model
+fit1 <- mlVAR(sample1, vars = var.names, idvar = "ID", beepvar="DIARYDAY",
+lags = 1,scale=TRUE,scaleWithin = TRUE)
+}
 ntwrk <- read_network(fit1)
 }

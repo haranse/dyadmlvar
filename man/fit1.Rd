@@ -7,18 +7,13 @@
 \format{an mlVAR object with 6 nodes}
 \source{
 an internal dataset, analyzed using the mlVAR package (Epskamp,
-  Deserno & Bringmann, 2018). For details on the data collection see:
-  Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
-  judgments of support receipt between romantic partners. Personal
-  Relationships, 23(1), 42-61.
+  Deserno & Bringmann, 2018).
 }
 \usage{
 fit1
 }
 \description{
-An mlVAR model obtained from diary data collected from
-  80 couples. Nodes include daily feelings of anger, sadness and anxiety for
-  each partner an mlVAR object, with some internal variables removed to
-  conserve package space
+An mlVAR model obtained from analyzing sample1, with some
+  internal variables removed to conserve package space
 }
 \keyword{datasets}
