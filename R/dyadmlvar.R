@@ -44,7 +44,7 @@
 #'
 #' \code{read_network} Function that analyzes a dyadic timeseries network and
 #' calculates strength and density variables. Assumes variables are list for one
-#' subject and then equivalent list for another.
+#' subject and then an equivalent list for another.
 #' @param mlvar_model An mlVAR object, usually created by the mlVAR function of
 #'   package mlVAR. The target variables should have been of even length, with
 #'   the first half belonging to part A of the dyad (e.g. men, clients,
@@ -228,6 +228,63 @@ read_network <- function(mlvar_model) {
   return(ntwrk_vars)
 }
 
+#' Calculate parameters of the network on the between-subject level
+#' \code{between_network} Function that analyzes a dyadic timeseries network and
+#' calculates density variables for between-subjects connections. Assumes variables
+#' were provided as a list for one subject and then an equivalent list for another.
+#' @param mlvar_model An mlVAR object, usually created by the mlVAR function of
+#'   package mlVAR. The target variables should have been of even length, with
+#'   the first half belonging to part A of the dyad (e.g. men, clients,
+#'   children) and the other to part B (e.g. women, therapists, parents)
+#' @return a list of sample-level between-subjects density variables:
+#'     intra.density - average density of both partners' between-subject networks
+#'     intra_A.density - density of partner A's between-subject network
+#'     intra_B.density - density of partner B's between-subject network
+#'     inter.density - density of between-subject connections between partners
+#'     ratio.density - ratio between inter density and average intra density
+#' @export
+#' @examples
+#' \donttest{
+#' require("mlVAR")
+#' # creating a variable list with the first half containing variables for
+#' # partner A and the second half containing variables for partner B
+#'  var.names =
+#' c("M_Anx.","M_Sad.","M_Vig.","M_Con.","W_Anx.","W_Sad.","W_Vig.","W_Con.")
+#'
+#' # running mlVAR to create a model
+#' fit1 <- mlVAR(sample1, vars = var.names, idvar = "ID", beepvar="DIARYDAY",
+#' lags = 1,scale=TRUE,scaleWithin = TRUE)
+#' }
+#' between <- between_network(fit1)
+between_network <- function(mlvar_model) {
+  ntwrk_vars <- list()
+  ntwrk_vars$vars <- list()
+  ntwrk_vars$vars$names <- mlvar_model$input$vars
+  ntwrk_vars$vars$len <- length(ntwrk_vars$vars$names)
+
+  #caluculating inter and intra density for contemporaneous connections
+  between.1<-data.frame(mlvar_model$results$Omega_mu$pcor$mean)
+  #connections from partner A to partner A
+  a<-sum(as.matrix((abs(between.1[1:(ntwrk_vars$vars$len/2),1:(ntwrk_vars$vars$len/2)]))))
+  # dividing by number of nodes
+  a<-(a-ntwrk_vars$vars$len/2)/((ntwrk_vars$vars$len/2)^2-(ntwrk_vars$vars$len/2))
+  #connections from partner B to partner B
+  b<-sum(as.matrix((abs(between.1[(ntwrk_vars$vars$len/2+1):ntwrk_vars$vars$len,(ntwrk_vars$vars$len/2+1):ntwrk_vars$vars$len]))))
+  b<-(b-ntwrk_vars$vars$len/2)/((ntwrk_vars$vars$len/2)^2-(ntwrk_vars$vars$len/2))
+  #connections from partner B to partner A (with cont. this is symmetrical)
+  c<-mean(as.matrix((abs(between.1[(ntwrk_vars$vars$len/2+1):ntwrk_vars$vars$len,1:(ntwrk_vars$vars$len/2)]))))
+
+  between <- list()
+  between$intra.density<-mean(c(a,b))
+  between$intra_A.density <- a
+  between$intra_B.density <- b
+  between$inter.density<-c
+  #calculate intra to inter ratio
+  between$ratio.density<-(between$inter.density/between$intra.density)
+  return(between)
+}
+
+
 #' Constant for retreiving node connections between partner A variables
 #' @export
 INTRA_A = 1
@@ -262,23 +319,24 @@ TEMPORAL = 2
 #' @export
 ALL_NETWORK = 6
 
-#' Get a list of variable names form a dyadNetwork object
+#' Get a list of variable names from a dyadNetwork object
 #'
-#' \code{get_names} Get a list of variable names form a dyadNetwork object,
-#' e.g. variable names for intra-partner connections for partner A
+#' \code{get_names} Get a list of variable names from a dyadNetwork object, e.g.
+#' variable names for intra-partner connections for partner A
 #' @param ntwrk a dyadNetwork object
 #' @param part which kind of variables to retrieve:
-#'      INTRA_A - interconnections between partner A variables
-#'      INTRA_B - interconnections between partner B variables
-#'      INTER - connections between partner A to partner B variables
-#'      STRENGTH - node strengths
-#'      DENSITY - density of intra-partner and inter-partner networks and
-#'          the ratio between both densities
-#'      ALL_NETWORK - all variables
+#'     INTRA_A - interconnections between partner A variables
+#'     INTRA_B - interconnections between partner B variables
+#'     INTER - connections between partner A to partner B variables
+#'     STRENGTH - node strengths
+#'     DENSITY - density of intra-partner A network, intra-partner B
+#'        network and inter-partner networks and the ratio between
+#'        inter-partner density to the average of intra-partner densities
+#'     ALL_NETWORK - all variables
 #' @param time which network to retreive variables from:
-#'      TEMPORAL - temporal network
-#'      CONTEMP - contemporaneous network
-#'      ALL_NETWORK - both
+#'     TEMPORAL - temporal network
+#'     CONTEMP - contemporaneous network
+#'     ALL_NETWORK - both
 #' @return a list of variable name strings
 #' @export
 #' @examples

@@ -2,10 +2,15 @@ context("Check lasso results")
 library(dyadmlvar)
 
 ntwrk <- read_network(fit1)
+between <- between_network(fit1)
 
 full_data <- merge(ntwrk$all, sat, by = "ID", all=TRUE, sort=TRUE)
 inter_vars <- get_names(ntwrk, part = dyadmlvar::INTER, time = dyadmlvar::ALL_NETWORK)
 test_res <- lasso(full_data, inter_vars, "W_csi_resid")
+
+test_that("Correct between ratio", {
+  expect_equal(between$ratio.density,0.6169197,tolerance = 0.00001)
+})
 
 
 test_that("Correct class output", {
@@ -20,7 +25,7 @@ test_that("Correct number of names", {
 
 
 test_that("Correct merge", {
-  expect_equal(length(full_data),129)
+  expect_equal(length(full_data),133)
   expect_equal(length(full_data$W_csi_resid),80)
 })
 

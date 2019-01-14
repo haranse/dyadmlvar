@@ -18,7 +18,7 @@ a dyadNetwork object with variables characterizing the network
 \description{
 \code{read_network} Function that analyzes a dyadic timeseries network and
 calculates strength and density variables. Assumes variables are list for one
-subject and then equivalent list for another.
+subject and then an equivalent list for another.
 }
 \examples{
 \donttest{
