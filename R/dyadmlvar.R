@@ -107,12 +107,14 @@ read_network <- function(mlvar_model) {
 
        #intra density - connections in both directions between couple member's variables to themselves
        temporal.1$temporal.intra.density<-mean(c(a,b))
+       temporal.1$temporal.intra_A.density<-a
+       temporal.1$temporal.intra_B.density<-b
 
        #inter density - connections in both directions between couple member's variables to themselves
        temporal.1$temporal.inter.density<-mean(c(c,d))
 
        #ratio between intra and inter density
-       temporal.1$temporal.ratio.density<-with(temporal.1,temporal.intra.density/temporal.inter.density)
+       temporal.1$temporal.ratio.density<-with(temporal.1,temporal.inter.density/temporal.intra.density)
        temporal.1$ID<-mlvar_model$IDs[i]
        ntwrk_vars$temporal$all<-rbind( ntwrk_vars$temporal$all,temporal.1)
 
@@ -136,8 +138,10 @@ read_network <- function(mlvar_model) {
        b<-(b-(ntwrk_vars$vars$len/2))/((ntwrk_vars$vars$len/2)^2-(ntwrk_vars$vars$len/2))
        c<-mean(as.matrix((abs(cont.1[(ntwrk_vars$vars$len/2+1):ntwrk_vars$vars$len,1:(ntwrk_vars$vars$len/2)]))))
        contemporaneous.2$cont.intra.density<-mean(c(a,b))
+       contemporaneous.2$cont.intra_A.density<-a
+       contemporaneous.2$cont.intra_B.density<-b
        contemporaneous.2$cont.inter.density<-c
-       contemporaneous.2$cont.ratio.density<-with(contemporaneous.2,cont.intra.density/cont.inter.density)
+       contemporaneous.2$cont.ratio.density<-with(contemporaneous.2,cont.inter.density/cont.intra.density)
        contemporaneous.2$ID<-mlvar_model$IDs[i]
        ntwrk_vars$contemp$all<-rbind(ntwrk_vars$contemp$all,contemporaneous.2)
 
@@ -150,7 +154,7 @@ read_network <- function(mlvar_model) {
   ntwrk_vars$temporal$intra_partA_names <- vector()
   ntwrk_vars$temporal$intra_partB_names <- vector()
   ntwrk_vars$temporal$intra_names <- vector()
-  ntwrk_vars$temporal$density_names<-c("temporal.intra.density","temporal.inter.density","temporal.ratio.density")
+  ntwrk_vars$temporal$density_names<-c("temporal.intra_A.density","temporal.intra_B.density","temporal.inter.density","temporal.ratio.density")
   for(i in 1:ntwrk_vars$vars$len){
     for (j in 1:ntwrk_vars$vars$len)
     {
@@ -188,7 +192,7 @@ read_network <- function(mlvar_model) {
   ntwrk_vars$contemp$intra_names <- vector()
   ntwrk_vars$contemp$intra_partA_names <- vector()
   ntwrk_vars$contemp$intra_partB_names <- vector()
-  ntwrk_vars$contemp$density_names<-c("cont.intra.density","cont.inter.density","cont.ratio.density")
+  ntwrk_vars$contemp$density_names<-c("cont.intra_A.density","cont.intra_B.density","cont.inter.density","cont.ratio.density")
   for(i in 1:(ntwrk_vars$vars$len-1)){
     for (j in (i+1):ntwrk_vars$vars$len)
     {
