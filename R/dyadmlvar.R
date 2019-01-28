@@ -13,8 +13,8 @@
 #'   feelings of anger, sadness and anxiety for each partner, an id for each
 #'   couples and a diaryday denoting the relevant day of the diary (e.g. 0 for
 #'   the first day, 34 for day 35 of the diary)
-#' @format an mlVAR object with 6 nodes
-#' @source an internal dataset. For details on the data collection see:
+#' @format An mlVAR object with 6 nodes
+#' @source An internal dataset. For details on the data collection see:
 #'   Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
 #'   judgments of support receipt between romantic partners. Personal
 #'   Relationships, 23(1), 42-61.
@@ -23,8 +23,8 @@
 #' Example mlVAR model
 #' @description An mlVAR model obtained from analyzing sample1, with some
 #'   internal variables removed to conserve package space
-#' @format an mlVAR object with 6 nodes
-#' @source an internal dataset, analyzed using the mlVAR package (Epskamp,
+#' @format An mlVAR object with 6 nodes
+#' @source An internal dataset, analyzed using the mlVAR package (Epskamp,
 #'   Deserno & Bringmann, 2018).
 "fit1"
 
@@ -32,8 +32,8 @@
 #' @description relationship satisfaction before and after completing a daily
 #'   diary for 80 couples, and residuals of post-diary satisfaction after
 #'   adjusting for pre-diary satisfaction.
-#' @format a dataframe with 7 variables and 80 rows
-#' @source an internal dataset, for details on the data collection see:
+#' @format A dataframe with 7 variables and 80 rows
+#' @source An internal dataset, for details on the data collection see:
 #'   Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
 #'   judgments of support receipt between romantic partners. Personal
 #'   Relationships, 23(1), 42-61.
@@ -49,7 +49,7 @@
 #'   package mlVAR. The target variables should have been of even length, with
 #'   the first half belonging to part A of the dyad (e.g. men, clients,
 #'   children) and the other to part B (e.g. women, therapists, parents)
-#' @return a dyadNetwork object with variables characterizing the network
+#' @return A dyadNetwork object with variables characterizing the network
 #' @export
 #' @examples
 #' \donttest{

@@ -4,9 +4,9 @@
 \name{fit1}
 \alias{fit1}
 \title{Example mlVAR model}
-\format{an mlVAR object with 6 nodes}
+\format{An mlVAR object with 6 nodes}
 \source{
-an internal dataset, analyzed using the mlVAR package (Epskamp,
+An internal dataset, analyzed using the mlVAR package (Epskamp,
   Deserno & Bringmann, 2018).
 }
 \usage{

@@ -4,9 +4,9 @@
 \name{sample1}
 \alias{sample1}
 \title{Example data}
-\format{an mlVAR object with 6 nodes}
+\format{An mlVAR object with 6 nodes}
 \source{
-an internal dataset. For details on the data collection see:
+An internal dataset. For details on the data collection see:
   Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
   judgments of support receipt between romantic partners. Personal
   Relationships, 23(1), 42-61.

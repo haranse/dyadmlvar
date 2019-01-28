@@ -13,7 +13,7 @@ the first half belonging to part A of the dyad (e.g. men, clients,
 children) and the other to part B (e.g. women, therapists, parents)}
 }
 \value{
-a dyadNetwork object with variables characterizing the network
+A dyadNetwork object with variables characterizing the network
 }
 \description{
 \code{read_network} Function that analyzes a dyadic timeseries network and

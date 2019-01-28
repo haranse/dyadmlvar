@@ -4,9 +4,9 @@
 \name{sat}
 \alias{sat}
 \title{Relationship satisfaction data}
-\format{a dataframe with 7 variables and 80 rows}
+\format{A dataframe with 7 variables and 80 rows}
 \source{
-an internal dataset, for details on the data collection see:
+An internal dataset, for details on the data collection see:
   Bar-Kalifa, E., Rafaeli, E., & Sened, H. (2016). Truth and bias in daily
   judgments of support receipt between romantic partners. Personal
   Relationships, 23(1), 42-61.
